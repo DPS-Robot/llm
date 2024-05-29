@@ -1,5 +1,6 @@
 from llamaapi import LlamaAPI
 from dotenv import load_dotenv
+load_dotenv()
 import os
 import json
 llama = LlamaAPI(os.getenv("API_KEY"))
