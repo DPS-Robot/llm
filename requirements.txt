@@ -1,2 +1,6 @@
 llamaapi
 python-dotenv
+pyfirmata
+transformers
+pillow
+einops
