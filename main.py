@@ -6,6 +6,7 @@ import json
 import pyfirmata
 llama = LlamaAPI(os.getenv("API_KEY"))
 
+"""
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from PIL import Image
 
@@ -19,7 +20,8 @@ tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision)
 image = Image.open('sample.jpg')
 enc_image = model.encode_image(image)
 description = model.answer_question(enc_image, "Describe this image.", tokenizer)
-
+"""
+description = "Black"
 api_request_json = {
   "model": "llama3-70b",
   "messages": [
