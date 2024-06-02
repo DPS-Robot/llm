@@ -63,25 +63,11 @@ scared = "scared"
 laughing = "laughing"
 crying = "crying"
 
-
-chatlog = ""
-def facialExpression(emotion):
-    print(f"Facial Expression Function Working, Parameter Recieved is {emotion}")
-
-while True:
-    prompt = transcribe(record_audio())
-    print("Audio Processed \n\n")
-    chatlog += f"User: {prompt}\n"
-    api_request_json = {
+api_request_json = {
         "model": "llama3-70b",
         "messages": [
             {"role": "system", "content": f"""
-     
-             Previous Chats for Context:
-             {chatlog}
-
-             
-
+            
             You are supposed to be a humanoid robot, your responses will have 2 segments, verbal response and Functions.
             These segments will be separated with a $ sign.
             The second segment will be your arm movement, expressions etc where you will give functions separated by a ","
@@ -98,15 +84,22 @@ while True:
 
             For a handshake you will only need to move your right arm.
             Your verbal responses should be brief, not more than 30 words.
-            """},
-
-            {"role": "user", "content": f"{description} $ {prompt}"},
+            """}
         ]
     }
+
+chatlog = ""
+def facialExpression(emotion):
+    print(f"Facial Expression Function Working, Parameter Recieved is {emotion}")
+
+while True:
+    prompt = transcribe(record_audio())
+    print("Audio Processed \n\n")
+    api_request_json["messages"].append({"role": "user", "content": prompt})
     response = llama.run(api_request_json)
     responseArray = json.dumps(response.json()["choices"][0]["message"]["content"]).replace('"', '').split("$")
     print(responseArray[0])
-    chatlog += f"Robot: {responseArray[0]}\n"
+    api_request_json["messages"].append({"role": "system", "content": responseArray[0]})
     array = responseArray[1].replace(" ", "").split(',')
     for i in array:
         try:
