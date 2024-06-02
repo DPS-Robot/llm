@@ -10,9 +10,9 @@ model = Wav2Vec2ForCTC.from_pretrained(model_name)
 def record_audio():
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
-        print("Please say something:")
+        print("Say Something:\n")
         audio = recognizer.listen(source)
-        
+        print("Processing Audio")
         audio_path = "recorded_audio.wav"
         with open(audio_path, "wb") as f:
             f.write(audio.get_wav_data())
