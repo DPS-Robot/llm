@@ -6,6 +6,7 @@ import json
 import pyfirmata
 llama = LlamaAPI(os.getenv("API_KEY"))
 from speech import record_audio, transcribe
+from speechSynthesis import gen, playAudio
 
 import speech_recognition as sr
 import requests
@@ -29,6 +30,8 @@ def listen():
         print("unknown error occurred")
         return "Errorred"
 
+
+
 """
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from PIL import Image
@@ -44,6 +47,8 @@ image = Image.open('sample.jpg')
 enc_image = model.encode_image(image)
 description = model.answer_question(enc_image, "Describe this image.", tokenizer)
 """
+
+
 description = "Black"
 
 
@@ -69,13 +74,31 @@ data = {
     "messages": [
         {
             "role": "user",
-            "content": "YOU WILL ONLY ALWAYS RESPOND BRIEFLY, ONLY BETWEEN 1 TO 20 WORDS."
+            "content": "YOU WILL ONLY ALWAYS RESPOND BRIEFLY, ONLY BETWEEN 1 TO 20 WORDS., ALL NUMBERS YOU HAVE TO SPELL OUT, NO NUMBERS ALLOWED, NO EMOJIS ALLOWED, NO PUNCTUATION ALLOWED, NO REPEATING YOURSELF, NO ASKING QUESTIONS, NO SWEARING, NO POLITICS"
+        }
+    ],
+    "stream": False
+}
+
+data2 = {
+    "model": "tinyllama",
+    "messages": [
+        {
+            "role": "user",
+            "content": "tell it to do functions here"
         }
     ],
     "stream": False
 }
 
 def ask(q):
+    url = "http://localhost:11434/api/chat"
+    data["messages"].append({"role": "user", "content": q})
+    response = requests.post(url, json=data)
+    response = response.json()
+    return response["message"]["content"]
+
+def functions(q):
     url = "http://localhost:11434/api/chat"
     data["messages"].append({"role": "user", "content": q})
     response = requests.post(url, json=data)
@@ -89,15 +112,22 @@ while True:
     prompt = listen()
     print("Audio Processed \n\n")
     print(f"You: {prompt}")
-    print(ask(prompt))
+    output = ask(prompt)
+    func = functions(prompt)
+    print(f"Bot: {output}")
+    gen(output)
+    playAudio()
     #api_request_json["messages"].append({"role": "user", "content": prompt})
     #response = llama.run(api_request_json)
     #responseArray = json.dumps(response.json()["choices"][0]["message"]["content"]).replace('"', '').split("$")
     #print(responseArray[0])
     #api_request_json["messages"].append({"role": "system", "content": responseArray[0]})
     #array = responseArray[1].replace(" ", "").split(',')
-    #for i in array:
-    #    try:
-    #        eval(i)
-    #    except:
-    #        print("Error in function")
+
+
+    # Make the LLM Send it separated by commas then split that thing at commas and push to array
+    for i in array:
+        try:
+            eval(i)
+        except:
+            print("Error in function")
