@@ -6,7 +6,7 @@ import json
 import pyfirmata
 llama = LlamaAPI(os.getenv("API_KEY"))
 from speech import record_audio, transcribe
-from speechSynthesis import gen, playAudio
+from speechSynthesis import gen
 
 import speech_recognition as sr
 import requests
@@ -70,18 +70,18 @@ laughing = "laughing"
 crying = "crying"
 
 data = {
-    "model": "tinyllama",
+    "model": "phi3:mini",
     "messages": [
         {
             "role": "user",
-            "content": "YOU WILL ONLY ALWAYS RESPOND BRIEFLY, ONLY BETWEEN 1 TO 20 WORDS., ALL NUMBERS YOU HAVE TO SPELL OUT, NO NUMBERS ALLOWED, NO EMOJIS ALLOWED, NO PUNCTUATION ALLOWED, NO REPEATING YOURSELF, NO ASKING QUESTIONS, NO SWEARING, NO POLITICS"
+            "content": "ALWAYS RESPOND BRIEFLY AND IN 1 SENTENCE, NEVER USE MORE THAN 1 SENTENCE. ALL NUMBERS YOU HAVE TO SPELL OUT. DO NOT RESPOND ANYTHING ELSE. ONLY THAT 1 SENTENCE"
         }
     ],
     "stream": False
 }
 
 data2 = {
-    "model": "tinyllama",
+    "model": "phi3:mini",
     "messages": [
         {
             "role": "user",
@@ -109,14 +109,14 @@ def facialExpression(emotion):
     print(f"Facial Expression Function Working, Parameter Recieved is {emotion}")
 
 while True:
-    prompt = listen()
+    prompt = transcribe(record_audio())
     print("Audio Processed \n\n")
     print(f"You: {prompt}")
     output = ask(prompt)
-    func = functions(prompt)
+    #func = functions(prompt)
     print(f"Bot: {output}")
     gen(output)
-    playAudio()
+    #playAudio()
     #api_request_json["messages"].append({"role": "user", "content": prompt})
     #response = llama.run(api_request_json)
     #responseArray = json.dumps(response.json()["choices"][0]["message"]["content"]).replace('"', '').split("$")
@@ -126,8 +126,11 @@ while True:
 
 
     # Make the LLM Send it separated by commas then split that thing at commas and push to array
+    """
     for i in array:
         try:
             eval(i)
         except:
             print("Error in function")
+
+            """
